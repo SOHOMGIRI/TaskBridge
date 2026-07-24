@@ -11,6 +11,7 @@ import {
   FaBullseye,
 } from 'react-icons/fa';
 import API from '../config';
+import { getToken } from '../utils/auth';
 import './PostJob.css';
 
 const CATEGORIES = [
@@ -91,11 +92,21 @@ function PostJob() {
         deadline: form.deadline,
         description,
         postedBy: `${form.businessName.trim()} — ${form.yourName.trim()}`,
-        // ✅ FIXED: was postedByUserId, now ownerId to match Job model
         ownerId: loggedInUser?._id || loggedInUser?.id || '',
       };
 
-      await axios.post(`${API}/api/jobs`, payload);
+      console.log('Posting job with ownerId:', payload.ownerId);
+
+      const token = getToken();
+      if (!token) {
+        setSubmitError('Please login as a Business to post a job.');
+        setLoading(false);
+        return;
+      }
+
+      await axios.post(`${API}/api/jobs`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setSuccess(true);
       setForm(initialForm);
     } catch (err) {

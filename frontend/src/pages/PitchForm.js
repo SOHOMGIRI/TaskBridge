@@ -458,7 +458,7 @@ function PitchForm() {
             </ul>
             <div style={{marginTop:'20px',padding:'15px',background:'#1a0f00',borderRadius:'8px',border:'1px solid #FF6B00'}}>
               <p style={{color:'#FF6B00',fontWeight:'bold',margin:'0 0 8px 0',fontSize:'13px'}}>✨ AI Powered</p>
-              <p style={{color:'#888',margin:0,fontSize:'12px'}}>Use the AI buttons to instantly enhance your pitch!</p>
+              <p style={{color:'#888',margin:0,fontSize:'12px'}}>Use the AI buttons to instantly enhance your pitch with Claude AI!</p>
             </div>
           </motion.div>
         </aside>

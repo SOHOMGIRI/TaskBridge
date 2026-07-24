@@ -4,7 +4,7 @@ export default function TrustTiers() {
   return (
     <div style={{background:'#0A0A0A',minHeight:'100vh',padding:'60px 20px',color:'white',maxWidth:'900px',margin:'0 auto'}}>
       <h1 style={{color:'#FF6B00',fontSize:'2.5rem',marginBottom:'10px'}}>Trust Ladder 🏆</h1>
-      <p style={{color:'#888',marginBottom:'40px'}}>How students earn their reputation on I-COCKROACH</p>
+      <p style={{color:'#888',marginBottom:'40px'}}>How students earn their reputation on TaskBridge</p>
       <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'20px'}}>
         {[
           {tier:'🥉 Bronze',points:'0-25',jobs:'0-10 jobs',color:'#cd7f32',perks:['Access to all jobs','Basic profile','Submit pitches']},

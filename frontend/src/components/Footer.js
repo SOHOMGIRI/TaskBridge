@@ -10,10 +10,11 @@ function Footer() {
       <div className="footer-inner">
         <div className="footer-top">
           <div className="footer-brand">
-            <span className="footer-logo">🪳 I-COCKROACH</span>
+            <span className="footer-logo">🌉 TaskBridge</span>
             <p className="footer-tagline">Instantly. Affordably. Locally.</p>
             <p className="footer-desc">
-              Hyperlocal marketplace connecting SME businesses with verified college talent.
+              India's hyperlocal marketplace connecting SME businesses
+              with verified college talent.
             </p>
           </div>
 
@@ -51,7 +52,7 @@ function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p className="footer-copy">© {year} I-COCKROACH. All rights reserved.</p>
+          <p className="footer-copy">© {year} TaskBridge. All rights reserved.</p>
           <div className="footer-social">
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>

@@ -112,7 +112,7 @@ function Signup() {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        <span className="auth-logo">🪳 I-COCKROACH</span>
+        <span className="auth-logo">🌉 TaskBridge</span>
         <h1 className="auth-title">Create Account</h1>
 
         <div className="auth-toggle">

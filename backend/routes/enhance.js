@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const Anthropic = require('@anthropic-ai/sdk');
 
 router.post('/', async (req, res) => {
   const { fieldName, fieldValue } = req.body;
@@ -9,43 +10,29 @@ router.post('/', async (req, res) => {
   }
 
   if (!['intro', 'whyMe'].includes(fieldName)) {
-    return res.status(400).json({ message: 'fieldName must be intro or whyMe' });
+    return res.status(400).json({ message: 'Invalid field' });
   }
 
+  const prompt = fieldName === 'intro'
+    ? `You are a professional pitch writer helping Indian college students get freelance jobs from local businesses. Enhance this student introduction to make it more professional, confident and engaging. Keep it under 80 words. Return ONLY the enhanced text, nothing else. Original: ${fieldValue}`
+    : `You are a professional pitch writer helping Indian college students win freelance jobs. Enhance this "Why Me" pitch to make it compelling, specific and confident for an Indian SME business owner. Keep it under 120 words. Return ONLY the enhanced text, nothing else. Original: ${fieldValue}`;
+
   try {
-    const text = fieldValue.trim();
-    const cleaned = text
-      .replace(/\bi\b/g, 'I')
-      .replace(/\bim\b/gi, "I'm")
-      .replace(/\bdont\b/gi, "don't")
-      .replace(/\bcant\b/gi, "can't")
-      .replace(/\bwont\b/gi, "won't")
-      .replace(/\biam\b/gi, 'I am')
-      .replace(/\s+/g, ' ')
-      .trim();
+    const client = new Anthropic();
+    const message = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 300,
+      messages: [{ role: 'user', content: prompt }],
+    });
 
-    let enhancedText = '';
-
-    if (fieldName === 'intro') {
-      enhancedText = `${cleaned}
-
-As a dedicated and skilled professional, I bring hands‑on experience and a results‑driven approach to every project. I am committed to delivering exceptional quality within deadlines, ensuring your business goals are met with precision and creativity.`;
-    } else {
-      enhancedText = `${cleaned}
-
-I have a proven track record of delivering similar projects with outstanding results. My technical expertise, attention to detail, and proactive communication style make me uniquely qualified for this opportunity. I am confident in exceeding your expectations within the agreed timeline and budget, and I am fully committed to making this collaboration a success.`;
+    const enhancedText = message.content[0]?.text;
+    if (enhancedText) {
+      return res.json({ enhancedText: enhancedText.trim() });
     }
-
-    // Fallback: if somehow empty, just return cleaned text
-    if (!enhancedText.trim()) {
-      enhancedText = cleaned || "Your text has been improved.";
-    }
-
-    return res.json({ enhancedText: enhancedText.trim() });
-
+    return res.status(500).json({ message: 'AI enhancement failed' });
   } catch (err) {
-    console.error('Enhance error:', err.message);
-    return res.status(500).json({ message: 'Enhancement failed' });
+    console.error('AI error:', err.message);
+    return res.status(500).json({ message: 'AI enhancement error: ' + err.message });
   }
 });
 

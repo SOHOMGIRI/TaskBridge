@@ -11,7 +11,7 @@ export default function Contact() {
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'20px',marginBottom:'40px'}}>
         {[
           ['📞','Phone','+91 9123338497'],
-          ['📧','Email','icockroach@gmail.com'],
+          ['📧','Email','taskbridge@gmail.com'],
           ['📍','Location','Mumbai, Maharashtra'],
           ['⏰','Support Hours','Mon-Sat 9AM-6PM']
         ].map(([icon,label,value])=>(

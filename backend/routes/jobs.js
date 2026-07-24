@@ -24,13 +24,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create a new job (must be logged in)
+// Create a new job (must be logged in — ownerId from JWT)
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const job = new Job({
-      ...req.body,
-      ownerId: req.user.id,    // ✅ attach logged-in user ID
-      postedBy: req.user.name, // optional display name
+      title: req.body.title,
+      category: req.body.category,
+      budget: req.body.budget,
+      deadline: req.body.deadline,
+      description: req.body.description,
+      postedBy: req.body.postedBy || req.user.name,
+      ownerId: req.user.id,
+      status: req.body.status || 'Open',
     });
     const savedJob = await job.save();
     res.status(201).json(savedJob);
@@ -39,7 +44,26 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// Update a job (only owner can update)
+// Update job status (used by students / admin)
+router.patch('/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!status) {
+      return res.status(400).json({ message: 'Status is required' });
+    }
+    const job = await Job.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true, runValidators: true }
+    );
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+    res.json(job);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Update a job (only owner)
 router.patch('/:id', authMiddleware, async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
@@ -57,22 +81,15 @@ router.patch('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Delete a job (only owner can delete)
-router.delete('/:id', authMiddleware, async (req, res) => {
+// Delete a job (admin panel / moderation — no owner restriction)
+router.delete('/:id', async (req, res) => {
   try {
-    const job = await Job.findById(req.params.id);
+    const job = await Job.findByIdAndDelete(req.params.id);
     if (!job) return res.status(404).json({ message: 'Job not found' });
-
-    if (String(job.ownerId) !== String(req.user.id)) {
-      return res.status(403).json({ message: 'Not authorized to delete this job' });
-    }
-
-    await job.deleteOne();
-    res.json({ message: 'Job deleted' });
+    res.json({ message: 'Job deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
 module.exports = router;
-

@@ -7,6 +7,7 @@ import {
   FaComment, FaStar, FaClock, FaLink, FaTimes, FaEye,
 } from 'react-icons/fa';
 import API from '../config';
+import { getToken } from '../utils/auth';
 import './BusinessDashboard.css';
 
 const API_BASE = API || 'https://i-cockroach.onrender.com';
@@ -85,31 +86,16 @@ function BusinessDashboard() {
     setError('');
   };
 
-  // ✅ FIXED: Multiple fallback checks so owner is always detected correctly
+  // Ownership uses job.ownerId (Job model field) vs logged-in user id
   const isJobOwner = (job) => {
-    if (!loggedInUser) return false;
-
+    if (!loggedInUser || !job) return false;
     const userId = String(loggedInUser._id || loggedInUser.id || '').trim();
-    const userName = String(loggedInUser.name || loggedInUser.businessName || '').trim().toLowerCase();
+    if (!userId) return false;
 
-    // Check 1: match by postedByUserId (most reliable)
-    if (job.postedByUserId && job.postedByUserId !== '') {
-      if (String(job.postedByUserId).trim() === userId) return true;
-    }
+    const ownerId = job.ownerId != null ? String(job.ownerId).trim() : '';
+    if (!ownerId) return false;
 
-    // Check 2: match by postedBy name as fallback
-    // (covers jobs posted before postedByUserId was saved)
-    if (job.postedBy && userName) {
-      if (String(job.postedBy).trim().toLowerCase() === userName) return true;
-    }
-
-    // Check 3: match by user email if stored
-    const userEmail = String(loggedInUser.email || '').trim().toLowerCase();
-    if (job.postedByEmail && userEmail) {
-      if (String(job.postedByEmail).trim().toLowerCase() === userEmail) return true;
-    }
-
-    return false;
+    return ownerId === userId;
   };
 
   const handleAccept = async (pitchId) => {
@@ -121,7 +107,12 @@ function BusinessDashboard() {
     try {
       setActionLoading(pitchId);
       setSuccessMsg('');
-      const { data } = await axios.patch(`${API_BASE}/api/pitches/${pitchId}/accept`);
+      const token = getToken();
+      const { data } = await axios.patch(
+        `${API_BASE}/api/pitches/${pitchId}/accept`,
+        {},
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
       setPitches(data.pitches || []);
       setJobs(prev => prev.map(j =>
         j._id === selectedJob._id ? { ...j, status: 'In Progress' } : j
@@ -143,7 +134,12 @@ function BusinessDashboard() {
     }
     try {
       setActionLoading(pitchId);
-      const { data } = await axios.patch(`${API_BASE}/api/pitches/${pitchId}`, { status: 'Rejected' });
+      const token = getToken();
+      const { data } = await axios.patch(
+        `${API_BASE}/api/pitches/${pitchId}/reject`,
+        {},
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
       setPitches(prev => prev.map(p => p._id === pitchId ? data : p));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to reject pitch.');
@@ -283,11 +279,11 @@ function BusinessDashboard() {
                     <p className="modal-job-title">{selectedJob.title}</p>
                     {isJobOwner(selectedJob) ? (
                       <span style={{color:'#FF6B00',fontSize:'13px',fontWeight:'bold'}}>
-                        ✅ Your job — you can accept/reject pitches
+                        ✅ This is your job - manage pitches below
                       </span>
                     ) : (
                       <span style={{color:'#888',fontSize:'13px'}}>
-                        👁️ Viewing only — this is not your job
+                        🔒 Only the original job poster can manage these pitches
                       </span>
                     )}
                   </div>
@@ -398,7 +394,7 @@ function BusinessDashboard() {
                         )}
                         {pitch.status === 'Pending' && !isJobOwner(selectedJob) && (
                           <p style={{color:'#888',fontSize:'12px',textAlign:'center',marginTop:'10px'}}>
-                            🔒 Only the job owner can accept or reject pitches
+                            🔒 Only the original job poster can manage these pitches
                           </p>
                         )}
                       </motion.div>

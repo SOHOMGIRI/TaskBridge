@@ -42,17 +42,24 @@ router.get('/job/:jobId', async (req, res) => {
   }
 });
 
-// Update pitch status (generic)
-router.patch('/:id', async (req, res) => {
+// Update pitch status (generic — owner only for Accept/Reject-style changes)
+router.patch('/:id', authMiddleware, async (req, res) => {
   try {
     const { status } = req.body;
     if (!status) return res.status(400).json({ message: 'Status is required' });
-    const pitch = await Pitch.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true, runValidators: true }
-    );
+
+    const pitch = await Pitch.findById(req.params.id);
     if (!pitch) return res.status(404).json({ message: 'Pitch not found' });
+
+    const job = await Job.findById(pitch.jobId);
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    if (String(job.ownerId) !== String(req.user.id)) {
+      return res.status(403).json({ message: 'Not authorized to update pitches for this job' });
+    }
+
+    pitch.status = status;
+    await pitch.save();
     res.json(pitch);
   } catch (err) {
     res.status(400).json({ message: err.message });

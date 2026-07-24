@@ -11,8 +11,8 @@ import { FaCheck } from 'react-icons/fa';
 import './Home.css';
 
 const headlineLines = [
-  "India's First Hyperlocal",
-  'Digital Execution',
+  "India's #1 Hyperlocal",
+  'Digital Talent',
   'Marketplace',
 ];
 
@@ -223,7 +223,7 @@ function Home() {
             animate={{ opacity: 1 }}
             transition={{ delay: 2, duration: 0.6 }}
           >
-            500+ Businesses • 1200+ Students • ₹25L+ Paid Out
+            Trusted by 500+ businesses across India • Join 1,200+ verified student freelancers • ₹25L+ earned by students on TaskBridge
           </motion.p>
         </div>
       </section>

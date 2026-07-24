@@ -87,7 +87,7 @@ export default function AdminPanel() {
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'30px',flexWrap:'wrap',gap:'15px'}}>
           <div>
             <h1 style={{color:'#FF6B00',fontSize:'2rem',margin:0}}>🛡️ Admin Panel</h1>
-            <p style={{color:'#888',margin:'5px 0 0 0'}}>Manage all jobs on I-COCKROACH</p>
+            <p style={{color:'#888',margin:'5px 0 0 0'}}>Manage all jobs on TaskBridge</p>
           </div>
           <div style={{display:'flex',gap:'15px'}}>
             <div style={{background:'#111',padding:'15px 20px',borderRadius:'12px',border:'1px solid #222',textAlign:'center'}}>

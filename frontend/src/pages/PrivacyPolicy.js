@@ -9,7 +9,7 @@ export default function PrivacyPolicy() {
         ['How We Use Data','Your data is used to match businesses with students, process payments, and improve our platform.'],
         ['Data Security','All data is encrypted and stored securely. We never sell your personal information to third parties.'],
         ['Payments','Payment information is processed securely. We use escrow to protect both parties.'],
-        ['Contact','For privacy concerns contact us at icockroach@gmail.com or call +91 9123338497'],
+        ['Contact','For privacy concerns contact us at taskbridge@gmail.com or call +91 9123338497'],
       ].map(([title,text])=>(
         <div key={title} style={{background:'#111',borderRadius:'12px',padding:'25px',marginBottom:'20px',border:'1px solid #222'}}>
           <h2 style={{color:'#FF6B00',marginBottom:'12px'}}>{title}</h2>

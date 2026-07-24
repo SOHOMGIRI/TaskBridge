@@ -36,12 +36,12 @@ app.use('/api/enhance', require('./routes/enhance'));
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('🪳 I-COCKROACH API Running');
+  res.send('🌉 TaskBridge API Running - India Hyperlocal Talent Marketplace');
 });
 
 // Server listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 I-COCKROACH Server Running on Port ${PORT}`);
+  console.log(`🚀 TaskBridge Server Running on Port ${PORT}`);
 });
 

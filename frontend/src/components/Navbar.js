@@ -29,8 +29,8 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-inner">
         <NavLink to="/" className="navbar-brand">
-          <span className="navbar-logo">🪳 I-COCKROACH</span>
-          <span className="navbar-tagline">Instantly. Affordably. Locally.</span>
+          <span className="navbar-logo">🌉 TaskBridge</span>
+          <span className="navbar-tagline">India's Hyperlocal Talent Marketplace</span>
         </NavLink>
 
         <ul className="navbar-links">
