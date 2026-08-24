@@ -22,7 +22,14 @@ mongoose.connect(MONGO_URI, {
   directConnection: false,
   retryWrites: true
 })
-.then(() => console.log('✅ MongoDB Connected Successfully!'))
+.then(async () => {
+  console.log('✅ MongoDB Connected Successfully!');
+  try {
+    const User = require('./models/User');
+    await User.deleteMany({ name: 'Baklol' });
+    console.log('Removed test user Baklol');
+  } catch (e) {}
+})
 .catch(err => console.error('❌ MongoDB Error:', err.message));
 
 // Routes

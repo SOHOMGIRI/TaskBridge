@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 // POST /api/students - create new
 router.post('/', async (req, res) => {
   try {
-    const student = new Student(req.body);
+    const student = new User({ ...req.body, userType: 'Student' });
     const savedStudent = await student.save();
     res.status(201).json(savedStudent);
   } catch (err) {
@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
 // GET /api/students/:id - get one
 router.get('/:id', async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id);
+    const student = await User.findOne({ _id: req.params.id, userType: 'Student' });
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
     }
