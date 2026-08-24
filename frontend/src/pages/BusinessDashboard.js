@@ -63,6 +63,7 @@ function BusinessDashboard() {
     };
     fetchJobs();
     return () => { isMounted = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchPitches = async (job) => {

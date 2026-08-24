@@ -21,7 +21,7 @@ export default function AdminPanel() {
       return;
     }
     fetchJobs();
-  }, []);
+  }, [navigate]);
 
   const getToken = () => localStorage.getItem('icockroach_token');
 

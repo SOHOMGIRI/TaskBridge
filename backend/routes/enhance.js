@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Anthropic = require('@anthropic-ai/sdk');
+const { GoogleGenAI } = require('@google/genai');
 
 router.post('/', async (req, res) => {
   const { fieldName, fieldValue } = req.body;
@@ -18,14 +18,17 @@ router.post('/', async (req, res) => {
     : `You are a professional pitch writer helping Indian college students win freelance jobs. Enhance this "Why Me" pitch to make it compelling, specific and confident for an Indian SME business owner. Keep it under 120 words. Return ONLY the enhanced text, nothing else. Original: ${fieldValue}`;
 
   try {
-    const client = new Anthropic();
-    const message = await client.messages.create({
-      model: 'claude-3-haiku-20240307',
-      max_tokens: 300,
-      messages: [{ role: 'user', content: prompt }],
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ message: 'GEMINI_API_KEY is not configured on the server.' });
+    }
+
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
     });
 
-    const enhancedText = message.content[0]?.text;
+    const enhancedText = response.text;
     if (enhancedText) {
       return res.json({ enhancedText: enhancedText.trim() });
     }
