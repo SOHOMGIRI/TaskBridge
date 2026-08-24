@@ -29,7 +29,7 @@ function Login() {
         password,
       });
 
-      if (data.user.userType !== userType) {
+      if (data.user.userType !== userType && data.user.userType !== 'Admin') {
         setError(
           `This account is registered as ${data.user.userType}. Switch to "${data.user.userType === 'Business' ? "I'm a Business" : "I'm a Student"}".`
         );

@@ -33,8 +33,16 @@ router.post('/', async (req, res) => {
 });
 
 // Get all pitches for a specific job
-router.get('/job/:jobId', async (req, res) => {
+router.get('/job/:jobId', authMiddleware, async (req, res) => {
   try {
+    const job = await Job.findById(req.params.jobId);
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+    
+    // Check if the requester is the owner of the job or an admin
+    if (String(job.ownerId) !== String(req.user.id) && req.user.userType !== 'Admin') {
+      return res.status(403).json({ message: 'Not authorized to view pitches for this job' });
+    }
+
     const pitches = await Pitch.find({ jobId: req.params.jobId }).sort({ createdAt: -1 });
     res.json(pitches);
   } catch (err) {

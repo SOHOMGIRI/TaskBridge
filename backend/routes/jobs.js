@@ -6,7 +6,9 @@ const authMiddleware = require('../middleware/auth');
 // Get all jobs
 router.get('/', async (req, res) => {
   try {
-    const jobs = await Job.find().sort({ createdAt: -1 });
+    const query = {};
+    if (req.query.ownerId) query.ownerId = req.query.ownerId;
+    const jobs = await Job.find(query).sort({ createdAt: -1 });
     res.json(jobs);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -81,9 +83,12 @@ router.patch('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Delete a job (admin panel / moderation — no owner restriction)
-router.delete('/:id', async (req, res) => {
+// Delete a job (admin panel / moderation)
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
+    if (req.user.userType !== 'Admin') {
+      return res.status(403).json({ message: 'Only admins can delete jobs' });
+    }
     const job = await Job.findByIdAndDelete(req.params.id);
     if (!job) return res.status(404).json({ message: 'Job not found' });
     res.json({ message: 'Job deleted successfully' });

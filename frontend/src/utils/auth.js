@@ -21,5 +21,7 @@ export const clearAuth = () => {
   window.dispatchEvent(new Event('auth-change'));
 };
 
-export const getDashboardPath = (userType) =>
-  userType === 'Business' ? '/business-dashboard' : '/student-dashboard';
+export const getDashboardPath = (userType) => {
+  if (userType === 'Admin') return '/admin';
+  return userType === 'Business' ? '/business-dashboard' : '/student-dashboard';
+};

@@ -48,7 +48,9 @@ function BusinessDashboard() {
       setLoadingJobs(true);
       setError('');
       try {
-        const { data } = await axios.get(`${API_BASE}/api/jobs`);
+        const userId = loggedInUser?.id || loggedInUser?._id;
+        const url = userId ? `${API_BASE}/api/jobs?ownerId=${userId}` : `${API_BASE}/api/jobs`;
+        const { data } = await axios.get(url);
         if (!isMounted) return;
         setJobs(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -67,7 +69,11 @@ function BusinessDashboard() {
     try {
       setLoadingPitches(true);
       setError('');
-      const { data } = await axios.get(`${API_BASE}/api/pitches/job/${job._id}`);
+      const token = getToken();
+      const { data } = await axios.get(
+        `${API_BASE}/api/pitches/job/${job._id}`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
       setPitches(Array.isArray(data) ? data : []);
       setSelectedJob(job);
       setSuccessMsg('');

@@ -48,8 +48,12 @@ router.post('/signup', async (req, res) => {
       });
     }
 
-    if (!['Business', 'Student'].includes(userType)) {
+    if (!['Business', 'Student', 'Admin'].includes(userType)) {
       return res.status(400).json({ message: 'Invalid user type.' });
+    }
+
+    if (userType === 'Admin' && req.body.adminSecret !== 'icockroach_admin_2026') {
+      return res.status(403).json({ message: 'Invalid admin secret.' });
     }
 
     if (password.length < 6) {

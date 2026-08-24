@@ -1,22 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API from '../config';
 
 export default function AdminPanel() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [password, setPassword] = useState('');
-  const [authenticated, setAuthenticated] = useState(false);
-  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleAdminLogin = () => {
-    if (password === 'icockroach_admin_2026') {
-      setAuthenticated(true);
-      fetchJobs();
-    } else {
-      setError('Wrong admin password!');
+  useEffect(() => {
+    const userStr = localStorage.getItem('icockroach_user');
+    if (!userStr) {
+      navigate('/login');
+      return;
     }
-  };
+    const user = JSON.parse(userStr);
+    if (user.userType !== 'Admin') {
+      alert('Access Denied. Admins only.');
+      navigate('/');
+      return;
+    }
+    fetchJobs();
+  }, []);
+
+  const getToken = () => localStorage.getItem('icockroach_token');
 
   const fetchJobs = async () => {
     try {
@@ -34,7 +41,9 @@ export default function AdminPanel() {
   const handleCancelJob = async (jobId) => {
     if (!window.confirm('Are you sure you want to CANCEL this job?')) return;
     try {
-      await axios.patch(`${API}/api/jobs/${jobId}/status`, { status: 'Closed' });
+      await axios.patch(`${API}/api/jobs/${jobId}/status`, { status: 'Closed' }, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
       setJobs(prev => prev.map(j => j._id === jobId ? { ...j, status: 'Closed' } : j));
       alert('✅ Job cancelled successfully!');
     } catch (err) {
@@ -46,7 +55,9 @@ export default function AdminPanel() {
   const handleDeleteJob = async (jobId) => {
     if (!window.confirm('PERMANENTLY DELETE this job? Cannot be undone!')) return;
     try {
-      await axios.delete(`${API}/api/jobs/${jobId}`);
+      await axios.delete(`${API}/api/jobs/${jobId}`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
       setJobs(prev => prev.filter(j => j._id !== jobId));
       alert('✅ Job deleted successfully!');
     } catch (err) {
@@ -54,32 +65,6 @@ export default function AdminPanel() {
       alert(`Failed to delete job: ${err.response?.data?.message || err.message}`);
     }
   };
-
-  if (!authenticated) {
-    return (
-      <div style={{background:'#0A0A0A',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>
-        <div style={{background:'#111',padding:'40px',borderRadius:'16px',border:'1px solid #FF6B00',width:'350px'}}>
-          <h2 style={{color:'#FF6B00',marginBottom:'20px',textAlign:'center'}}>🔐 Admin Access</h2>
-          <p style={{color:'#888',marginBottom:'20px',textAlign:'center',fontSize:'14px'}}>Only for website administrators</p>
-          <input
-            type="password"
-            placeholder="Enter admin password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleAdminLogin()}
-            style={{width:'100%',background:'#1a1a1a',border:'1px solid #333',borderRadius:'8px',padding:'12px',color:'white',marginBottom:'15px',boxSizing:'border-box'}}
-          />
-          {error && <p style={{color:'red',marginBottom:'10px',fontSize:'14px'}}>{error}</p>}
-          <button
-            onClick={handleAdminLogin}
-            style={{width:'100%',background:'#FF6B00',color:'white',border:'none',padding:'12px',borderRadius:'8px',fontWeight:'bold',cursor:'pointer'}}
-          >
-            Login as Admin
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div style={{background:'#0A0A0A',minHeight:'100vh',padding:'40px 20px',color:'white'}}>
