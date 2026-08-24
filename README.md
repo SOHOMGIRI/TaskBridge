@@ -26,21 +26,16 @@ TaskBridge is a hyperlocal digital execution marketplace that bridges the gap be
 - **Frontend:** React.js, Framer Motion, React Router v6
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB Atlas (AWS Mumbai)
-- **AI:** Claude AI (Anthropic) for pitch enhancement
+- **AI Integration:** Google Gemini (gemini-3.6-flash)
 - **Deployment:** Vercel (frontend) + Render (backend)
 
-## Features
-- ✅ Business & Student accounts with JWT auth
-- ✅ AI-powered pitch enhancement (Claude AI)
-- ✅ 6 job categories (Social Media, Branding, Video, Growth, Tech, Research)
-- ✅ Trust Ladder (Bronze → Silver → Gold → Verified Pro)
-- ✅ Business dashboard with pitch management
-- ✅ Student dashboard with earnings tracking
-- ✅ Admin panel for platform moderation
-- ✅ Real-time job status tracking
-
-## AI Integration
-Students can click "✨ Enhance with AI" to instantly improve their pitch using Claude AI (Anthropic). The AI rewrites their introduction and "Why Me" section to be more professional and compelling.
+## Key Features
+- **Role-Based Auth (JWT):** Secure logins for Businesses, Students, and Admins.
+- **AI-Powered Pitches:** Integrated Google Gemini to help students rewrite and format their proposals professionally.
+- **Data Privacy & Security:** Strict backend ownership checks ensure businesses can only view and manage their own postings and received pitches.
+- **Admin Moderation:** A dedicated `/admin` portal allowing platform managers to monitor, cancel, or permanently delete inappropriate job postings.
+- **Trust Ladder:** Gamified tier system (Bronze → Silver → Gold → Verified Pro) to track student reliability.
+- **Real-Time Dashboards:** Interactive UI for businesses to review pitches and students to track their earnings and job statuses.
 
 ## Contact
 - Email: girisohom11@gmail.com
